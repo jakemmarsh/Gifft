@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var React = require('react-native');
 var Icon = require('FAKIconImage');
 var {
@@ -11,7 +12,7 @@ var {
   TouchableHighlight,
   Image
 } = React;
-var OccasionPage = require('./OccasionPage');
+var constants = require('../constants');
 var styles = StyleSheet.create({
   row: {
     padding: 20,
@@ -67,7 +68,7 @@ var styles = StyleSheet.create({
   }
 });
 
-class MainListPage extends Component {
+class GiftIdeasListPage extends Component {
 
   constructor(props) {
     var dataSource = new ListView.DataSource({
@@ -77,22 +78,16 @@ class MainListPage extends Component {
     super(props);
 
     this.state = {
-      dataSource: dataSource.cloneWithRows(this.props.occasions)
+      loading: true,
+      occasion: props.data.occasion,
+      reminders: props.data.occasion.reminders || [],
+      dataSource: dataSource.cloneWithRows(props.data.occasion.reminders || [])
     }
-  }
-
-  navigateToOccasion(occasion) {
-    this.props.navigator.push({
-      title: occasion.title || 'Occasion',
-      component: OccasionPage,
-      backButtonTitle: 'Upcoming',
-      passProps: {occasion}
-    });
   }
 
   renderRow(occasion, sectionID, rowID) {
     return (
-      <TouchableHighlight underlayColor="#dddddd" onPress={this.navigateToOccasion.bind(this, occasion)}>
+      <TouchableHighlight underlayColor={constants.colors.dark_grey} onPress={this.navigateToOccasion.bind(this, occasion)}>
         <View>
           <View style={styles.row}>
             <View>
@@ -135,4 +130,4 @@ class MainListPage extends Component {
 
 }
 
-module.exports = MainListPage;
+module.exports = GiftIdeasListPage;

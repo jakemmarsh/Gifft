@@ -6,18 +6,23 @@ var {
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   Component,
   StatusBarIOS,
   AppStateIOS
 } = React;
-var MainListPage = require('./pages/MainListPage');
-var CreatePage = require('./pages/CreatePage');
-var {
-  getAllOccasions,
-  saveOccasion
-} = require('./utils/Storage');
+var Router = require('react-native-router');
+var MainListPage = require('./js/pages/MainListPage');
+var CreateOccasionPage = require('./js/pages/CreateOccasionPage');
+var AddOccasionButton = require('./js/components/AddOccasionButton');
+var Storage = require('./js/utils/Storage');
+var constants = require('./js/constants');
 var styles = StyleSheet.create({
+  header: {
+    backgroundColor: constants.colors.teal
+  },
+  title: {
+    color: constants.colors.dark_teal
+  },
   container: {
     flex: 1
   }
@@ -28,9 +33,10 @@ class GifftApp extends Component {
   constructor(props) {
     super(props);
 
-    // Storage.getAllOccasions().then((occasions) => {
-    //   this.state = {occasions}
-    // });
+    this.state = {
+      loading: true,
+      occasions: []
+    };
 
     StatusBarIOS.setStyle(0);
   }
@@ -44,21 +50,29 @@ class GifftApp extends Component {
   _handleRightButtonPress() {
     this.props.navigator.push({
       title: 'Save an Occasion',
-      component: CreatePage,
+      component: CreateOccasionPage,
       backButtonTitle: 'Upcoming'
     });
   }
 
   componentWillMount() {
-    console.log('will mount');
     // Storage.saveOccasion({
     //   title: 'Mom\'s Birthday',
-
+    //   date: new Date()
+    // }, (occasions) => {
+    //   console.log('occasions after saving:', occasions);
+    //   this.setState({ occasions });
     // });
   }
 
   componentDidMount() {
     AppStateIOS.addEventListener('change', this._handleAppStateChange);
+    Storage.getAllOccasions().then((occasions) => {
+      this.setState({
+        loading: false,
+        occasions: occasions || []
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -67,21 +81,16 @@ class GifftApp extends Component {
 
   render() {
     return (
-      <NavigatorIOS style={styles.container} initialRoute={{
-          title: 'Upcoming Occasions',
-          component: MainListPage,
-          barTintColor: '#c1ebdd',
-          rightButtonTitle: '+',
-          onRightButtonPress: this._handleRightButtonPress.bind(this),
-          passProps: {
-            occasions: [{
-              title: 'Mom\'s Birthday',
-              reminders: [1, 2, 3],
-              giftIdeas: [1, 2],
-              date: new Date()
-            }]
-          }
-        }} />
+      <Router headerStyle={styles.header}
+              firstRoute={{
+                headerStyle: styles.header,
+                name: 'Upcoming Occasions',
+                component: MainListPage,
+                rightCorner: AddOccasionButton,
+                data: {
+                  occasions: this.state.occasions
+                }
+              }} />
     );
   }
 

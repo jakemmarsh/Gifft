@@ -7,12 +7,13 @@ var {
   View,
   Component
 } = React;
+var constants = require('../constants');
 var styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: constants.background_grey,
   },
   welcome: {
     fontSize: 20,
@@ -21,7 +22,7 @@ var styles = StyleSheet.create({
   }
 });
 
-class CreatePage extends Component {
+class CreateOccasionPage extends Component {
 
   constructor(props) {
     super(props);
@@ -39,4 +40,4 @@ class CreatePage extends Component {
 
 }
 
-module.exports = CreatePage;
+module.exports = CreateOccasionPage;
